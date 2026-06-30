@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="classroom attendance management system">
+    <title>{% block title %}Attendance{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    {% if session.get("user_id") %}
+    <aside class="sidebar">
+        <a class="brand" href="{{ url_for('dashboard') }}">
+    <span>
+        <strong>Attendance</strong>
+        <small>Classroom record system</small>
+    </span>
+</a>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('students') }}">Students</a>
+            <a href="{{ url_for('attendance') }}">Attendance</a>
+            <a href="{{ url_for('reports') }}">Reports</a>
+        </nav>
+        <form method="post" action="{{ url_for('logout') }}">
+            <button class="logout-btn" type="submit">Sign out</button>
+        </form>
+    </aside>
+    {% endif %}
+
+    <main class="{{ 'app-shell' if session.get('user_id') else 'auth-shell' }}">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-stack">
+                {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

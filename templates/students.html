@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Students |Attendance{% endblock %}
+{% block content %}
+<header class="page-header">
+    <div>
+        <span class="eyebrow">Student CRUD</span>
+        <h1>Student Directory</h1>
+        <p>Add, update, search, and remove classroom students.</p>
+    </div>
+</header>
+
+<section class="two-column">
+    <form class="panel form-panel" method="post" action="{{ url_for('edit_student', student_id=editing.id) if editing else url_for('students') }}">
+        <h2>{{ "Edit Student" if editing else "Add Student" }}</h2>
+        <div class="field-grid">
+            <label>Roll No<input name="roll_no" value="{{ editing.roll_no if editing else '' }}" placeholder="22CSE101" required></label>
+            <label>Name<input name="name" value="{{ editing.name if editing else '' }}" placeholder="Student name" required></label>
+            <label>Class<input name="class_name" value="{{ editing.class_name if editing else '' }}" placeholder="B.Tech CSE" required></label>
+            <label>Section<input name="section" value="{{ editing.section if editing else '' }}" placeholder="A" required></label>
+            <label>Email<input name="email" type="email" value="{{ editing.email if editing else '' }}" placeholder="student@example.com"></label>
+            <label>Phone<input name="phone" value="{{ editing.phone if editing else '' }}" placeholder="9876543210"></label>
+            <label>Status
+                <select name="status">
+                    {% set current_status = editing.status if editing else "Active" %}
+                    <option value="Active" {% if current_status == "Active" %}selected{% endif %}>Active</option>
+                    <option value="Inactive" {% if current_status == "Inactive" %}selected{% endif %}>Inactive</option>
+                </select>
+            </label>
+        </div>
+        <div class="button-row">
+            <button type="submit">{{ "Save changes" if editing else "Add student" }}</button>
+            {% if editing %}<a class="secondary-action" href="{{ url_for('students') }}">Cancel</a>{% endif %}
+        </div>
+    </form>
+
+    <section class="panel">
+        <div class="section-title">
+            <h2>Students</h2>
+            <span>{{ students|length }} record{% if students|length != 1 %}s{% endif %}</span>
+        </div>
+        <form class="search-form" method="get">
+            <input name="q" value="{{ query or '' }}" placeholder="Search roll, name, class, section">
+            <button type="submit">Search</button>
+        </form>
+        {% if students %}
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Roll No</th><th>Name</th><th>Class</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>
+                {% for student in students %}
+                    <tr>
+                        <td>{{ student.roll_no }}</td>
+                        <td><strong>{{ student.name }}</strong><small>{{ student.email or student.phone }}</small></td>
+                        <td>{{ student.class_name }} {{ student.section }}</td>
+                        <td><span class="status {{ student.status|lower }}">{{ student.status }}</span></td>
+                        <td class="actions">
+                            <a href="{{ url_for('edit_student', student_id=student.id) }}">Edit</a>
+                            <form method="post" action="{{ url_for('delete_student', student_id=student.id) }}" onsubmit="return confirm('Delete this student and related attendance records?')">
+                                <button class="link-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">No students found.</div>
+        {% endif %}
+    </section>
+</section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Attendance{% endblock %}
+{% block content %}
+<header class="page-header">
+    <div>
+        <span class="eyebrow">Overview</span>
+        <h1>Classroom Dashboard</h1>
+        <p>Today: {{ stats.today or "-" }}</p>
+    </div>
+    <a class="primary-action" href="{{ url_for('attendance') }}">Mark attendance</a>
+</header>
+
+<section class="stats-grid">
+    <article><small>Active students</small><strong>{{ stats.total_students or 0 }}</strong></article>
+    <article><small>Present today</small><strong>{{ stats.present_today or 0 }}</strong></article>
+    <article><small>Absent today</small><strong>{{ stats.absent_today or 0 }}</strong></article>
+    <article><small>Late today</small><strong>{{ stats.late_today or 0 }}</strong></article>
+    <article><small>Attendance rate</small><strong>{{ stats.attendance_rate or 0 }}%</strong></article>
+</section>
+
+<section class="panel">
+    <div class="section-title">
+        <h2>Recent Records</h2>
+        <a href="{{ url_for('reports') }}">View reports</a>
+    </div>
+    {% if recent_records %}
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Date</th><th>Roll No</th><th>Student</th><th>Class</th><th>Status</th><th>Marked By</th></tr></thead>
+            <tbody>
+            {% for record in recent_records %}
+                <tr>
+                    <td>{{ record.attendance_date }}</td>
+                    <td>{{ record.roll_no }}</td>
+                    <td>{{ record.student_name }}</td>
+                    <td>{{ record.class_name }} {{ record.section }}</td>
+                    <td><span class="status {{ record.status|lower }}">{{ record.status }}</span></td>
+                    <td>{{ record.marked_by }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">No attendance records yet.</div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Login | Attendance{% endblock %}
+{% block content %}
+<section class="login-panel">
+    <div class="login-copy">
+        <span class="eyebrow">Classroom</span>
+        <h1>Attendance System</h1>
+        <p>Securely manage students, mark daily attendance, and review classroom records from one focused dashboard.</p>
+        <dl>
+            <div><dt>Default email</dt><dd>admin@example.com</dd></div>
+            <div><dt>Default password</dt><dd>Admin@123</dd></div>
+        </dl>
+    </div>
+    <form class="login-card" method="post" novalidate>
+        <h2>Teacher Login</h2>
+        <label for="email">Email address</label>
+        <input id="email" name="email" type="email" value="{{ email }}" placeholder="admin@example.com" autocomplete="username" required autofocus>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" placeholder="Enter password" autocomplete="current-password" required>
+        <button type="submit">Sign in</button>
+    </form>
+</section>
+{% endblock %}

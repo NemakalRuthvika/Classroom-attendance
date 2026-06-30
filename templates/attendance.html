@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Attendance | Attendance{% endblock %}
+{% block content %}
+<header class="page-header">
+    <div>
+        <span class="eyebrow">Daily Record</span>
+        <h1>Mark Attendance</h1>
+        <p>Select a date and mark each active student.</p>
+    </div>
+</header>
+
+<section class="two-column">
+    <form class="panel form-panel" method="post">
+        <h2>Attendance Entry</h2>
+        <label>Date<input name="attendance_date" type="date" value="{{ today }}" required></label>
+        <label>Student
+            <select name="student_id" required>
+                <option value="">Select student</option>
+                {% for student in students %}
+                <option value="{{ student.id }}">{{ student.roll_no }} - {{ student.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>Status
+            <select name="status">
+                <option>Present</option>
+                <option>Absent</option>
+                <option>Late</option>
+            </select>
+        </label>
+        <label>Remarks<textarea name="remarks" rows="3" placeholder="Optional note"></textarea></label>
+        <button type="submit">Save attendance</button>
+    </form>
+
+    <section class="panel">
+        <div class="section-title">
+            <h2>Records for {{ today }}</h2>
+            <form class="inline-filter" method="get">
+                <input type="date" name="attendance_date" value="{{ today }}">
+                <button type="submit">Load</button>
+            </form>
+        </div>
+        {% if records %}
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Roll No</th><th>Student</th><th>Class</th><th>Status</th><th>Remarks</th><th></th></tr></thead>
+                <tbody>
+                {% for record in records %}
+                    <tr>
+                        <td>{{ record.roll_no }}</td>
+                        <td>{{ record.student_name }}</td>
+                        <td>{{ record.class_name }} {{ record.section }}</td>
+                        <td><span class="status {{ record.status|lower }}">{{ record.status }}</span></td>
+                        <td>{{ record.remarks or "-" }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('delete_attendance', record_id=record.id) }}" onsubmit="return confirm('Delete this attendance record?')">
+                                <input type="hidden" name="attendance_date" value="{{ today }}">
+                                <button class="link-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">No records for this date.</div>
+        {% endif %}
+    </section>
+</section>
+{% endblock %}
